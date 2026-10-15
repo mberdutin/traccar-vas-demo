@@ -90,6 +90,7 @@ const MainPage = () => {
   });
   const [filterSort, setFilterSort] = usePersistedState('filterSort', '');
   const [filterMap, setFilterMap] = usePersistedState('filterMap', false);
+  const [filterActivity, setFilterActivity] = usePersistedState('deviceActivityFilter', '');
 
   const [devicesOpen, setDevicesOpen] = useState(desktop);
   const [eventsOpen, setEventsOpen] = useState(false);
@@ -107,6 +108,7 @@ const MainPage = () => {
     filter,
     filterSort,
     filterMap,
+    filterActivity,
     positions,
     setFilteredDevices,
     setFilteredPositions,
@@ -137,6 +139,8 @@ const MainPage = () => {
             setFilterSort={setFilterSort}
             filterMap={filterMap}
             setFilterMap={setFilterMap}
+            filterActivity={filterActivity}
+            setFilterActivity={setFilterActivity}
           />
         </Paper>
         <div className={classes.middle}>

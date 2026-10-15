@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
+import { ACTIVITY_PERIODS, filterDevicesAndPositions } from './deviceActivity';
 
 export default (
   keyword,
   filter,
   filterSort,
   filterMap,
+  filterActivity,
   positions,
   setFilteredDevices,
   setFilteredPositions,
@@ -14,34 +16,28 @@ export default (
   const groups = useSelector((state) => state.groups.items);
   const devices = useSelector((state) => state.devices.items);
 
-  useEffect(() => {
-    const deviceGroups = (device) => {
-      const groupIds = [];
-      let { groupId } = device;
-      while (groupId) {
-        groupIds.push(groupId);
-        groupId = groups[groupId]?.groupId || 0;
-      }
-      return groupIds;
-    };
+  const [nowTick, setNowTick] = useState(() => Date.now());
 
-    const filtered = Object.values(devices)
-      .filter((device) => !filter.statuses.length || filter.statuses.includes(device.status))
-      .filter(
-        (device) =>
-          !filter.groups.length || deviceGroups(device).some((id) => filter.groups.includes(id)),
-      )
-      .filter(
-        (device) =>
-          !filter.geofences.length ||
-          (positions[device.id]?.geofenceIds || []).some((id) => filter.geofences.includes(id)),
-      )
-      .filter((device) => {
-        const lowerCaseKeyword = keyword.toLowerCase();
-        return [device.name, device.uniqueId, device.phone, device.model, device.contact].some(
-          (s) => s && s.toLowerCase().includes(lowerCaseKeyword),
-        );
-      });
+  useEffect(() => {
+    const interval = setInterval(() => setNowTick(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Use a fresh timestamp at calculation time: a device that just reported
+    // must never be hidden as "future" against a stale 60s tick. The timer
+    // above only triggers re-runs so devices age out of the window.
+    const now = Date.now();
+    const { devices: filtered, positions: filteredPositions } = filterDevicesAndPositions({
+      devices,
+      groups,
+      positions,
+      keyword,
+      filter,
+      activityPeriod: ACTIVITY_PERIODS[filterActivity] || 0,
+      now,
+      filterMap,
+    });
     switch (filterSort) {
       case 'name':
         filtered.sort((device1, device2) => device1.name.localeCompare(device2.name));
@@ -57,16 +53,14 @@ export default (
         break;
     }
     setFilteredDevices(filtered);
-    setFilteredPositions(
-      filterMap
-        ? filtered.map((device) => positions[device.id]).filter(Boolean)
-        : Object.values(positions),
-    );
+    setFilteredPositions(filteredPositions);
   }, [
     keyword,
     filter,
     filterSort,
     filterMap,
+    filterActivity,
+    nowTick,
     groups,
     devices,
     positions,

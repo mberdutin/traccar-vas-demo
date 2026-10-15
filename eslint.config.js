@@ -52,4 +52,12 @@ export default [
     },
   },
   prettierRecommended,
+  {
+    files: ['test/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
 ];

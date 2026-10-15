@@ -17,7 +17,13 @@ export default defineConfig(() => ({
     chunkSizeWarningLimit: 1100,
   },
   plugins: [
-    svgr(),
+    svgr({
+      svgrOptions: {
+        // Disable cosmiconfig discovery: it walks up the directory tree reading
+        // package.json at every level, which fails in sandboxed environments.
+        runtimeConfig: false,
+      },
+    }),
     react(),
     VitePWA({
       includeAssets: ['favicon.ico', 'apple-touch-icon-180x180.png'],

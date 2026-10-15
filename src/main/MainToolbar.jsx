@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   Checkbox,
   Badge,
+  Button,
   ListItemButton,
   ListItemText,
   Tooltip,
@@ -55,6 +56,8 @@ const MainToolbar = ({
   setFilterSort,
   filterMap,
   setFilterMap,
+  filterActivity,
+  setFilterActivity,
 }) => {
   const { classes } = useStyles();
   const theme = useTheme();
@@ -95,7 +98,10 @@ const MainToolbar = ({
                 color="info"
                 variant="dot"
                 invisible={
-                  !filter.statuses.length && !filter.groups.length && !filter.geofences.length
+                  !filter.statuses.length &&
+                  !filter.groups.length &&
+                  !filter.geofences.length &&
+                  !filterActivity
                 }
               >
                 <TuneIcon fontSize="small" />
@@ -202,6 +208,30 @@ const MainToolbar = ({
               <MenuItem value="lastUpdate">{t('deviceLastUpdate')}</MenuItem>
             </Select>
           </FormControl>
+          <FormControl>
+            <InputLabel id="activity-period-label">{t('deviceActivityFilter')}</InputLabel>
+            <Select
+              labelId="activity-period-label"
+              label={t('deviceActivityFilter')}
+              value={filterActivity}
+              onChange={(e) => setFilterActivity(e.target.value)}
+            >
+              <MenuItem value="">{t('deviceActivityOff')}</MenuItem>
+              <MenuItem value="1h">{t('deviceActivity1h')}</MenuItem>
+              <MenuItem value="6h">{t('deviceActivity6h')}</MenuItem>
+              <MenuItem value="24h">{t('deviceActivity24h')}</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            size="small"
+            variant="outlined"
+            color="inherit"
+            aria-label={t('deviceActivityReset')}
+            onClick={() => setFilterActivity('')}
+            disabled={!filterActivity}
+          >
+            {t('deviceActivityReset')}
+          </Button>
           <FormGroup>
             <FormControlLabel
               control={
