@@ -37,7 +37,7 @@ def main():
         assert (
             hashlib.sha256((Path("build") / name).read_bytes()).hexdigest() == digest
         ), name
-    subprocess.run(["git", "fetch", "origin", "main"], check=True)
+    subprocess.run(["git", "fetch", "origin", "main:refs/remotes/origin/main"], check=True)
     assert command("git", "rev-parse", "origin/main") == report["base_main_sha"], (
         "Main advanced since CI: run again on the new base"
     )
