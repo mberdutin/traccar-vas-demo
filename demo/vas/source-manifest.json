@@ -1,0 +1,227 @@
+{
+  "source_repository": "traccar/traccar-web",
+  "fork_repository": "mberdutin/traccar-vas-demo",
+  "source_commit": "1f1a5fbb99fb5f8a0ef95ad994090e650c9418df",
+  "fetched_at": "2026-10-15T14:25:03.251249+00:00",
+  "selection": [
+    {
+      "query": "filter",
+      "aliases": "фильтр фильтрация карта список поиск"
+    },
+    {
+      "query": "geofence",
+      "aliases": "геозона назначение привязка область"
+    },
+    {
+      "query": "mobile",
+      "aliases": "мобильный телефон адаптивность интерфейс"
+    },
+    {
+      "query": "time",
+      "aliases": "время период часовой пояс свежесть активность"
+    },
+    {
+      "query": "position",
+      "aliases": "позиция координаты местоположение карта"
+    },
+    {
+      "query": "notification",
+      "aliases": "уведомления события оповещения"
+    }
+  ],
+  "records": [
+    {
+      "number": 1830,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1830",
+      "updated_at": "2026-08-01T15:26:20Z"
+    },
+    {
+      "number": 1669,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1669",
+      "updated_at": "2026-01-27T14:39:11Z"
+    },
+    {
+      "number": 1849,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1849",
+      "updated_at": "2026-08-16T03:45:05Z"
+    },
+    {
+      "number": 733,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/733",
+      "updated_at": "2026-05-11T01:15:27Z"
+    },
+    {
+      "number": 1757,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1757",
+      "updated_at": "2026-04-17T04:04:10Z"
+    },
+    {
+      "number": 1724,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1724",
+      "updated_at": "2026-06-20T20:38:34Z"
+    },
+    {
+      "number": 1272,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1272",
+      "updated_at": "2026-05-11T13:40:13Z"
+    },
+    {
+      "number": 1013,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1013",
+      "updated_at": "2026-05-11T02:17:40Z"
+    },
+    {
+      "number": 551,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/551",
+      "updated_at": "2026-05-10T23:52:18Z"
+    },
+    {
+      "number": 542,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/542",
+      "updated_at": "2026-05-11T00:01:46Z"
+    },
+    {
+      "number": 1043,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1043",
+      "updated_at": "2026-03-08T20:18:28Z"
+    },
+    {
+      "number": 1559,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1559",
+      "updated_at": "2025-10-16T05:59:12Z"
+    },
+    {
+      "number": 1968,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1968",
+      "updated_at": "2026-10-03T03:51:38Z"
+    },
+    {
+      "number": 1329,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1329",
+      "updated_at": "2026-09-17T13:48:28Z"
+    },
+    {
+      "number": 1969,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1969",
+      "updated_at": "2026-09-12T04:47:04Z"
+    },
+    {
+      "number": 1967,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1967",
+      "updated_at": "2026-09-08T13:21:43Z"
+    },
+    {
+      "number": 1338,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1338",
+      "updated_at": "2026-06-20T21:03:00Z"
+    },
+    {
+      "number": 1570,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1570",
+      "updated_at": "2026-06-20T20:37:00Z"
+    },
+    {
+      "number": 1259,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1259",
+      "updated_at": "2026-06-20T21:00:40Z"
+    },
+    {
+      "number": 661,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/661",
+      "updated_at": "2026-05-10T23:04:35Z"
+    },
+    {
+      "number": 1028,
+      "kind": "issue",
+      "url": "https://github.com/traccar/traccar-web/issues/1028",
+      "updated_at": "2026-05-10T18:20:07Z"
+    },
+    {
+      "number": 2033,
+      "kind": "pull_request",
+      "url": "https://github.com/traccar/traccar-web/pull/2033",
+      "updated_at": "2026-10-14T13:40:38Z"
+    },
+    {
+      "number": 2032,
+      "kind": "pull_request",
+      "url": "https://github.com/traccar/traccar-web/pull/2032",
+      "updated_at": "2026-10-14T13:38:43Z"
+    },
+    {
+      "number": 2016,
+      "kind": "pull_request",
+      "url": "https://github.com/traccar/traccar-web/pull/2016",
+      "updated_at": "2026-10-08T16:49:46Z"
+    },
+    {
+      "number": 1974,
+      "kind": "pull_request",
+      "url": "https://github.com/traccar/traccar-web/pull/1974",
+      "updated_at": "2026-09-11T00:41:40Z"
+    },
+    {
+      "number": 1937,
+      "kind": "pull_request",
+      "url": "https://github.com/traccar/traccar-web/pull/1937",
+      "updated_at": "2026-08-13T22:36:15Z"
+    }
+  ],
+  "files": {
+    "00-product.md": "f37c3371c7150731f01bf35b151a2b5482230b1e9f963b527bbc5d0938c38505",
+    "01-domain.md": "b5223b989f981f31e33674c23793bf00c555a1d8e2ec9ddca4c3d6e84e877af1",
+    "02-code-map.md": "6c0e7590334f981f43fd65a52a11bb202ad22f50833fc613efae5016ba940870",
+    "03-existing-filters.md": "af6433de69dd7e5317bfb16dff248f7fb4be255fc1ddcebe0dac1f08aaece650",
+    "04-freshness-intake.md": "aa105f36dc3cd08a21afe3d1bf277af2335795b91ffcdff862d3c65388d17467",
+    "05-ux-geofences.md": "0a3b65b79820d1a950b5c29d7e183012cd5d7509ff819dd3d0e6a48ea8b81548",
+    "06-handoff.md": "a3006c8117765423809e078d8e6b72f8246102e8f3d52a9309f5928ee12f2ab4",
+    "07-verification.md": "98b9b22550cdb8b94cfec52a55a6c93c8a09cb66c7bf738f529304b1f02d3689",
+    "10-source-index.md": "40b349a06ae9740c62035d350e957a54f2792af9f279962a973bc4201c30f460",
+    "source-1013.md": "cbf47f43819579fc0f1f5ba5ddf2497989545bf8a54a2fa7d3b17e86c8d43f1e",
+    "source-1028.md": "d9fc454e0e845c5983e3d6db98285e993c89eebe22b1eb288bc03a0f298758a7",
+    "source-1043.md": "535c08c7c5bd9bdcaa51e6157666bce1cfbbf574ccf3ceb20daa89ee3f16cdce",
+    "source-1259.md": "bbee8454514cd369804a3f7d08d7d591c42fdaa45b4ef92eb33561b4c12f4284",
+    "source-1272.md": "dfbba9381344f5b0592cc066651e4c72e4b53a342636695721eeae7bf92f7a62",
+    "source-1329.md": "cd416655c929a7444e2857102e606338d1a6a825ae082b8be4bcd33f8653950b",
+    "source-1338.md": "d8be76aef269bf66aeb7073359e76028283ca5e01e7e329961be5d957a1ce780",
+    "source-1559.md": "bd1e0a64af42f6638f2a6471aca15e43380f488953ad906e4d4f06da23eacacc",
+    "source-1570.md": "cbb2b0d784b5b8311d72c44bfe32f70bf19c7d43c302c5e0da007d4726a66ab2",
+    "source-1669.md": "35e02ce3fa8a4d2adff4acb531eb5c0bf6969d772598aeb5dda417a1ac191404",
+    "source-1724.md": "74a2969bab40b155a968dd5910bc5538d0a4150551c58f261660235f90e0973a",
+    "source-1757.md": "8e30f4b73b168238067c2f2ea57edbcee2f545e356d0802e2a916f055481d2cc",
+    "source-1830.md": "8972ad594974a91e8cd5e2c65bcf743cf0e40c8ce61865a64c0f9f32b22e211e",
+    "source-1849.md": "61d829afd39c8da9416b80d854387daa10dc80040b674c62a4155c76b85db320",
+    "source-1937.md": "049f51f62abb8ae760fce713a3359ec2b2081bf09b3dfdf7807d0f4c718aeef8",
+    "source-1967.md": "85e981c4aa625cb153d89bce03fa6837847d60a6ffb63de1d6ce24888fbe1107",
+    "source-1968.md": "33a471a631f019218a2094664cf222e072ea5a7248d7aaa285803d253e7cd82f",
+    "source-1969.md": "c383e1e11d98b2dffdb7ecc6557598c046075486e8aabeec599a21997940e2ff",
+    "source-1974.md": "c8498fb8b481addf0edd956af4e6b3185e7cd558ce00f562db6f280faa1a91a0",
+    "source-2016.md": "02a3e87ef3792689f3118b5fd92efae7a19e496de56da5b3ef85cb4ce7a73c35",
+    "source-2032.md": "1b97813739737ebb3e36a8d5dfafc6c14e8ab2105d97a59ea063cff640b051e2",
+    "source-2033.md": "90572c3503c4010d7eb65172922403ceb056395d7898b73f9ead8e7450746462",
+    "source-542.md": "bea9488007be5ae84721676cd9a0b867f7ae94936b84865154a38f376b09653c",
+    "source-551.md": "6a05bfdbcd7952b378d6be25c8c246337e9dabcffef1f52b5e1a97049509a83e",
+    "source-661.md": "8ee045e194a2a903528bfe2fa1e3b4263eb8be051f1be5cefa4deb666e8bacae",
+    "source-733.md": "e0d1004211fdb5a33d28b727808a228b3058245f9b823154c847c17df5c11160"
+  }
+}

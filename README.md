@@ -1,5 +1,9 @@
 # [Traccar Web App](https://www.traccar.org)
 
+## VAS demo fork
+
+See [demo/vas/README.md](demo/vas/README.md) for the VAS workflow, knowledge corpus and source snapshot.
+
 ## Overview
 
 This is the browser-based tracking dashboard for [Traccar](https://www.traccar.org), a free and open source GPS tracking platform. It's a React, Material UI, and MapLibre single-page app that talks to the [Traccar server](https://github.com/traccar/traccar) over its REST API, providing the live map, reports, geofences, and device management UI most people mean when they say "Traccar."
