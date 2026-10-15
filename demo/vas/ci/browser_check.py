@@ -203,7 +203,9 @@ def fixture_case(browser, width):
     expect(select).to_be_visible()
     bounds = select.bounding_box()
     assert bounds["x"] >= 0 and bounds["x"] + bounds["width"] <= width
-    page.screenshot(path=str(ARTIFACTS / f"filter-control-{width}.png"))
+    page.screenshot(
+        animations="disabled", path=str(ARTIFACTS / f"filter-control-{width}.png")
+    )
     select.click()
     page.get_by_role("option", name="Last hour", exact=True).click()
     page.keyboard.press("Escape")
@@ -216,7 +218,11 @@ def fixture_case(browser, width):
     )
     page.wait_for_timeout(500)
     assert map_ids(page) == [1, 2], map_ids(page)
-    page.screenshot(path=str(ARTIFACTS / f"activity-{width}.png"), full_page=True)
+    page.screenshot(
+        animations="disabled",
+        path=str(ARTIFACTS / f"activity-{width}.png"),
+        full_page=True,
+    )
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), (
         "Horizontal overflow"
     )
@@ -382,7 +388,12 @@ def integration_case(browser):
     page.keyboard.press("Escape")
     expect(page.get_by_text("VAS API Fleet", exact=True)).to_be_visible()
     expect(page.get_by_text("VAS Hidden Fleet", exact=True)).to_have_count(0)
-    page.screenshot(path=str(ARTIFACTS / "real-api-integration.png"))
+    page.wait_for_timeout(250)
+    page.keyboard.press("Escape")
+    page.wait_for_timeout(250)
+    page.screenshot(
+        animations="disabled", path=str(ARTIFACTS / "real-api-integration.png")
+    )
     (ARTIFACTS / "backend-integration.json").write_text(
         json.dumps(
             {
