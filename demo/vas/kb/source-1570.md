@@ -9,7 +9,7 @@
 ## Текст обращения
 
 Today I have been testing Traccar Manager on android phone. Wanted to follow 2 devices; 1. Traccar Client installed on the same phone to trace my own position. 2. A small device using the H02 protocol to trace my hunting dog.
-Some observations: 
+Some observations:
 The replay function show that both devices upload positions to the Traccar server at demo2.traccar.org as specified and without any glitches. The device time and server time was never more than 2 seconds apart.
 **The active map does not show the full, detailed trace** of these devices. To save battery the phone is only unlocked short periods. The positions uploaded in between are not shown when phone is unlocked again. I have found a workaround to keep Traccar Manager alive while screenlock is on. Then many more of the the uploaded positions are shown on the active map. The route tested was 10km. For some areas the active map only show straight lines where there shoud have been a detailed trace. It seem like the download of positions from Traccar server to the Traccar Manager on the phone does not work propery in those areas, even if upload is ok.
 For the Traccar Manager to work properly in these situations **the missing positions must be downloaded and shown on the active map**.

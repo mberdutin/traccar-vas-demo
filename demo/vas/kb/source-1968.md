@@ -9,7 +9,7 @@
 ## Текст обращения
 
 ### Description
-In the older server versions of Traccar, it was possible to view the map and the speed diagram/graph simultaneously in a split-screen layout (Map on top, Graph at the bottom). In the current web interface, navigating between these views is less intuitive. 
+In the older server versions of Traccar, it was possible to view the map and the speed diagram/graph simultaneously in a split-screen layout (Map on top, Graph at the bottom). In the current web interface, navigating between these views is less intuitive.
 
 ### Proposal
 Please consider re-introducing a combined split-view option for reports and route playbacks. Having the map and the speed graph visible at the same time greatly improves data analysis efficiency, as users can visually correlate a specific location on the map with the corresponding speed spike or drop instantly.

@@ -24,7 +24,7 @@ Leave ignition on and you receive a "Maintenance Required" notification in all p
 
 To Fix:
 Set Maintenance Start to 3600000
-Set period to 3600000 
+Set period to 3600000
 
 After changing to 3600000 it only sends a notification every hour
 

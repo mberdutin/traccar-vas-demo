@@ -8,13 +8,13 @@
 
 ## Текст обращения
 
-MapLibre doesn’t currently support alternative coordinate projections, it’s been on the Road map for a long time! It would be very helpful to support alternative projections for maps that aren’t available in EPSG:3857 
+MapLibre doesn’t currently support alternative coordinate projections, it’s been on the Road map for a long time! It would be very helpful to support alternative projections for maps that aren’t available in EPSG:3857
 
 **Describe the solution you'd like**
-This looks like it could be a good interim solution -https://github.com/bwswedberg/maplibre-gl-raster-reprojection  
+This looks like it could be a good interim solution -https://github.com/bwswedberg/maplibre-gl-raster-reprojection
 
 **Describe alternatives you've considered**
-Only options available are external to Traccar like proxies which cause slow loading etc 
+Only options available are external to Traccar like proxies which cause slow loading etc
 
 ## Комментарий tananaev
 
@@ -26,7 +26,7 @@ What are the use cases you need it for?
 
 Источник: https://github.com/traccar/traccar-web/issues/1329#issuecomment-2624814762
 
-Personally OSGB EPSG:27700 
+Personally OSGB EPSG:27700
 
 & I know there are others with similar requests
 

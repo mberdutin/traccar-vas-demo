@@ -12,7 +12,7 @@
 Currently, analyzing data day-by-day or week-by-week requires users to manually open the calendar picker and re-enter the start and end dates/times every single time. If a user wants to audit consecutive days (e.g., checking August 1st, then August 2nd, then August 3rd), it results in a highly repetitive and tedious clicking process.
 
 ### Proposal
-Add "Next" (Forward) and "Previous" (Backward) arrow buttons next to the period/time selection field. 
+Add "Next" (Forward) and "Previous" (Backward) arrow buttons next to the period/time selection field.
 * Clicking the "Next" button should automatically shift the selected time window forward by its own duration (e.g., if the window is set to 24 hours, clicking "Next" shifts the start and end time exactly 24 hours forward to the next day).
 * Clicking "Previous" should shift the window backward by that same duration.
 
