@@ -4,8 +4,9 @@ Deterministic fixture cases are explicitly isolated from the integration case.
 No production app test hooks; Vite module exports inspect actual MapLibre sources.
 """
 
+import argparse
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
 from pathlib import Path
@@ -131,6 +132,7 @@ def fixture_case(browser, width):
     )
     page = context.new_page()
     page.clock.install(time=datetime.fromisoformat(NOW.replace("Z", "+00:00")))
+    page.clock.set_fixed_time(datetime.fromisoformat(NOW.replace("Z", "+00:00")))
     context.add_init_script(
         "localStorage.setItem('language', JSON.stringify('en')); localStorage.setItem('selectedMapStyle',JSON.stringify('locationIqStreets'));"
     )
@@ -170,6 +172,7 @@ def fixture_case(browser, width):
         lambda r: r.fulfill(
             json={
                 "version": 8,
+                "glyphs": "https://cdn.traccar.com/map/fonts/{fontstack}/{range}.pbf",
                 "sources": {},
                 "layers": [
                     {
@@ -181,6 +184,7 @@ def fixture_case(browser, width):
             }
         ),
     )
+    page.route("https://cdn.traccar.com/map/fonts/**", lambda r: r.fulfill(body=b""))
     page.goto(BASE)
     # Device list is initially hidden on mobile; use the existing map/list button.
     if width < 900:
@@ -197,6 +201,9 @@ def fixture_case(browser, width):
     ).click()
     select = page.get_by_role("combobox", name="Activity", exact=True)
     expect(select).to_be_visible()
+    bounds = select.bounding_box()
+    assert bounds["x"] >= 0 and bounds["x"] + bounds["width"] <= width
+    page.screenshot(path=str(ARTIFACTS / f"filter-control-{width}.png"))
     select.click()
     page.get_by_role("option", name="Last hour", exact=True).click()
     page.keyboard.press("Escape")
@@ -214,6 +221,10 @@ def fixture_case(browser, width):
         "Horizontal overflow"
     )
     page.reload()
+    if width < 900:
+        page.get_by_role("button").filter(
+            has=page.locator('[data-testid="DnsIcon"]')
+        ).click()
     expect(page.get_by_text("VAS Fresh", exact=True)).to_be_visible(timeout=30000)
     expect(page.get_by_text("VAS Old", exact=True)).to_have_count(0)
     # Live message changes visibility through the real Redux/socket pipeline.
@@ -225,12 +236,19 @@ def fixture_case(browser, width):
         ws.send(json.dumps({"devices": updated}))
     expect(page.get_by_text("VAS Old", exact=True)).to_be_visible()
     # Aging without incoming messages expires records at the timer boundary.
-    page.clock.fast_forward(61 * 60 * 1000)
+    page.clock.set_fixed_time(
+        datetime.fromisoformat(NOW.replace("Z", "+00:00")) + timedelta(minutes=62)
+    )
+    page.clock.fast_forward(60 * 1000)
     expect(page.get_by_text("VAS Fresh", exact=True)).to_have_count(0)
+    expect(page.get_by_text("VAS Old", exact=True)).to_have_count(0)
+    expect(page.get_by_text("VAS Boundary", exact=True)).to_have_count(0)
+    page.wait_for_timeout(200)
+    assert map_ids(page) == [], map_ids(page)
     page.get_by_role("button").filter(
         has=page.locator('[data-testid="TuneIcon"]')
     ).click()
-    page.get_by_role("button", name="Reset activity filter", exact=True).click()
+    page.get_by_role("button", name="Reset", exact=True).click()
     page.keyboard.press("Escape")
     expect(page.get_by_text("VAS Missing", exact=True)).to_be_visible()
     context.close()
@@ -345,6 +363,13 @@ def integration_case(browser):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--fixtures-only",
+        action="store_true",
+        help="Authoring check only; never completes CI",
+    )
+    args = parser.parse_args()
     ARTIFACTS.mkdir(exist_ok=True)
     log = (ARTIFACTS / "vite.log").open("w")
     vite = subprocess.Popen(
@@ -372,7 +397,8 @@ def main():
             )
             fixture_case(browser, 1280)
             fixture_case(browser, 390)
-            integration_case(browser)
+            if not args.fixtures_only:
+                integration_case(browser)
             browser.close()
     finally:
         vite.terminate()
