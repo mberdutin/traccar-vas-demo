@@ -314,6 +314,46 @@ def integration_case(browser):
             {"name": "VAS API Fleet", "uniqueId": "vas-ci-osmand", "attributes": {}},
             auth,
         )
+    # A second, restricted dispatcher proves the API does not expand device access.
+    viewer_email = "vas-viewer@example.invalid"
+    viewer_password = "vas-synthetic-viewer"
+    users = request(backend + "/api/users", auth=auth)
+    viewer = next((u for u in users if u["email"] == viewer_email), None)
+    if viewer is None:
+        viewer = request(
+            backend + "/api/users",
+            "POST",
+            {
+                "name": "VAS Dispatcher",
+                "email": viewer_email,
+                "password": viewer_password,
+                "readonly": True,
+                "deviceReadonly": True,
+            },
+            auth,
+        )
+    if not any(d["uniqueId"] == "vas-ci-hidden" for d in devices):
+        request(
+            backend + "/api/devices",
+            "POST",
+            {"name": "VAS Hidden Fleet", "uniqueId": "vas-ci-hidden", "attributes": {}},
+            auth,
+        )
+    try:
+        request(
+            backend + "/api/permissions",
+            "POST",
+            {"userId": viewer["id"], "deviceId": device["id"]},
+            auth,
+        )
+    except urllib.error.HTTPError as e:
+        if e.code not in (400, 409):
+            raise
+    viewer_devices = request(
+        backend + "/api/devices", auth=f"{viewer_email}:{viewer_password}"
+    )
+    assert [d["uniqueId"] for d in viewer_devices] == ["vas-ci-osmand"], viewer_devices
+
     protocol = os.environ["TRACCAR_OSMAND_URL"]
     request(
         protocol + "/?id=vas-ci-osmand&lat=55.75&lon=37.62&timestamp=1792065600&speed=0"
@@ -329,7 +369,7 @@ def integration_case(browser):
     assert any(p["deviceId"] == device["id"] for p in positions)
     context = browser.new_context(
         viewport={"width": 1280, "height": 900},
-        http_credentials={"username": email, "password": password},
+        http_credentials={"username": viewer_email, "password": viewer_password},
     )
     page = context.new_page()
     # Real API and websocket forwarded by Vite to the real backend.
@@ -342,6 +382,7 @@ def integration_case(browser):
     page.get_by_role("option", name="Last hour", exact=True).click()
     page.keyboard.press("Escape")
     expect(page.get_by_text("VAS API Fleet", exact=True)).to_be_visible()
+    expect(page.get_by_text("VAS Hidden Fleet", exact=True)).to_have_count(0)
     page.screenshot(path=str(ARTIFACTS / "real-api-integration.png"))
     (ARTIFACTS / "backend-integration.json").write_text(
         json.dumps(
@@ -350,6 +391,10 @@ def integration_case(browser):
                 "device_id": device["id"],
                 "lastUpdate": device["lastUpdate"],
                 "position_count": len(positions),
+                "restricted_viewer_device_count": len(viewer_devices),
+                "fixTime": next(
+                    p["fixTime"] for p in positions if p["deviceId"] == device["id"]
+                ),
                 "status": "PASS",
             },
             indent=2,
