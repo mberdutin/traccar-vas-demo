@@ -234,8 +234,11 @@ def fixture_case(browser, width):
     expect(page.get_by_text("VAS Fresh", exact=True)).to_be_visible(timeout=30000)
     expect(page.get_by_text("VAS Old", exact=True)).to_have_count(0)
     # Live message changes visibility through the real Redux/socket pipeline.
+    page.clock.set_fixed_time(
+        datetime.fromisoformat(NOW.replace("Z", "+00:00")) + timedelta(seconds=30)
+    )
     updated = [
-        dict(d, lastUpdate="2026-10-15T11:50:00Z") if d["id"] == 3 else d
+        dict(d, lastUpdate="2026-10-15T12:00:15Z") if d["id"] == 3 else d
         for d in DEVICES
     ]
     for ws in sockets[-1:]:
