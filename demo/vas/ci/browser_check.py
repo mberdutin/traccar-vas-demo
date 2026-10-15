@@ -291,20 +291,14 @@ def integration_case(browser):
     password = "vas-synthetic-demo"
     auth = f"{email}:{password}"
     server = request(backend + "/api/server")
-    try:
+    if server.get("newServer"):
+        # Traccar promotes the first registered user itself. Setting administrator
+        # before authentication triggers its permission guard during bootstrap.
         request(
             backend + "/api/users",
             "POST",
-            {
-                "name": "VAS CI",
-                "email": email,
-                "password": password,
-                "administrator": True,
-            },
+            {"name": "VAS CI", "email": email, "password": password},
         )
-    except urllib.error.HTTPError as e:
-        if e.code not in (400, 409):
-            raise
     devices = request(backend + "/api/devices", auth=auth)
     device = next((d for d in devices if d["uniqueId"] == "vas-ci-osmand"), None)
     if device is None:
@@ -365,12 +359,17 @@ def integration_case(browser):
             break
         time.sleep(1)
     assert device.get("lastUpdate"), device
-    positions = request(backend + "/api/positions", auth=auth)
+    for _ in range(30):
+        positions = request(backend + "/api/positions", auth=auth)
+        if any(p["deviceId"] == device["id"] for p in positions):
+            break
+        time.sleep(1)
     assert any(p["deviceId"] == device["id"] for p in positions)
-    context = browser.new_context(
-        viewport={"width": 1280, "height": 900},
-        http_credentials={"username": viewer_email, "password": viewer_password},
+    context = browser.new_context(viewport={"width": 1280, "height": 900})
+    response = context.request.post(
+        BASE + "/api/session", form={"email": viewer_email, "password": viewer_password}
     )
+    assert response.status == 200, f"Real Traccar login failed: {response.status}"
     page = context.new_page()
     # Real API and websocket forwarded by Vite to the real backend.
     page.goto(BASE)
