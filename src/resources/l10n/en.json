@@ -250,6 +250,8 @@
     "deviceActivity6h": "Last 6 hours",
     "deviceActivity24h": "Last 24 hours",
     "deviceActivityReset": "Reset",
+    "deviceHidden": "Hidden",
+    "deviceShowAll": "Show all",
     "deviceCommand": "Command",
     "deviceCommandSender": "Command Channel",
     "deviceFollow": "Follow",

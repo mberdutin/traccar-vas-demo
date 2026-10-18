@@ -67,6 +67,8 @@ DEVICES = [
         "attributes": {},
     },
 ]
+# VAS Missing (id 4) deliberately has NO position: it must appear in the
+# device list but never create a map marker (issue #2 acceptance criterion).
 POSITIONS = [
     dict(
         id=d["id"],
@@ -84,6 +86,7 @@ POSITIONS = [
         accuracy=0,
     )
     for d in DEVICES
+    if d["id"] != 4
 ]
 SERVER = {
     "id": 1,
@@ -124,6 +127,177 @@ def map_ids(page):
       }
       return [...ids].sort();
     }""")
+
+
+def filter_combobox(page, label):
+    """Combobox for a MainToolbar filter select.
+
+    The existing Status/Groups/Geofences/Sort By InputLabels have no labelId
+    association to their Select, so their comboboxes expose no accessible name
+    (only the Activity control does). Select them structurally through the
+    FormControl that owns the matching InputLabel instead.
+    """
+    return page.locator(
+        ".MuiFormControl-root",
+        has=page.get_by_text(label, exact=True),
+    ).get_by_role("combobox")
+
+
+def reset_badge_case(browser, width):
+    """Issue #2: hidden-devices counter and Show all reset above the list."""
+    context = browser.new_context(
+        viewport={"width": width, "height": 900}, locale="en-US", timezone_id="UTC"
+    )
+    page = context.new_page()
+    page.clock.install(time=datetime.fromisoformat(NOW.replace("Z", "+00:00")))
+    page.clock.set_fixed_time(datetime.fromisoformat(NOW.replace("Z", "+00:00")))
+    context.add_init_script(
+        "localStorage.setItem('language', JSON.stringify('en')); localStorage.setItem('selectedMapStyle',JSON.stringify('locationIqStreets'));"
+    )
+
+    def websocket(ws):
+        ws.send(json.dumps({"devices": DEVICES, "positions": POSITIONS}))
+
+    page.route_web_socket("**/api/socket", websocket)
+
+    def api(route):
+        key = route.request.url.split("/api/", 1)[1].split("?", 1)[0]
+        value = {
+            "server": SERVER,
+            "session": USER,
+            "devices": DEVICES,
+            "positions": POSITIONS,
+            "groups": [
+                {"id": 1, "name": "North", "groupId": 0, "attributes": {}},
+                {"id": 2, "name": "South", "groupId": 0, "attributes": {}},
+            ],
+            "geofences": [
+                {
+                    "id": 1,
+                    "name": "Moscow",
+                    "area": "CIRCLE (55.75 37.6, 10000)",
+                    "attributes": {},
+                }
+            ],
+        }.get(key, [])
+        route.fulfill(json=value)
+
+    page.route("**/api/**", api)
+    page.route(
+        "https://tiles.locationiq.com/**",
+        lambda r: r.fulfill(
+            json={
+                "version": 8,
+                "glyphs": "https://cdn.traccar.com/map/fonts/{fontstack}/{range}.pbf",
+                "sources": {},
+                "layers": [
+                    {
+                        "id": "background",
+                        "type": "background",
+                        "paint": {"background-color": "#e4eaf0"},
+                    }
+                ],
+            }
+        ),
+    )
+    page.route("https://cdn.traccar.com/map/fonts/**", lambda r: r.fulfill(body=b""))
+    page.goto(BASE)
+    if width < 900:
+        page.get_by_role("button").filter(
+            has=page.locator('[data-testid="DnsIcon"]')
+        ).click()
+    expect(page.get_by_text("VAS Fresh", exact=True)).to_be_visible(timeout=30000)
+    list_body = page.get_by_test_id("deviceListBody")
+    bar = page.get_by_test_id("hiddenDevicesBar")
+
+    # Nothing is filtered, so no counter is shown above the list rows.
+    expect(bar).to_have_count(0)
+
+    if width >= 900:
+        # Persist non-default sort and map-filter settings: Show all must keep both.
+        page.get_by_role("button").filter(
+            has=page.locator('[data-testid="TuneIcon"]')
+        ).click()
+        filter_combobox(page, "Sort By").click()
+        page.get_by_role("option", name="Name", exact=True).click()
+        page.keyboard.press("Escape")
+        page.get_by_role("button").filter(
+            has=page.locator('[data-testid="TuneIcon"]')
+        ).click()
+        page.get_by_role("checkbox", name="Filter on Map").check()
+        page.keyboard.press("Escape")
+        # A selected device row must survive the Show all reset.
+        list_body.get_by_text("VAS Fresh", exact=True).click()
+        expect(list_body.locator(".Mui-selected")).to_have_count(1)
+
+    # Keyword hides every other device; the counter updates in real time.
+    page.get_by_placeholder("Search Devices").fill("Boundary")
+    expect(bar).to_be_visible()
+    expect(bar).to_contain_text("Hidden: 4")
+    expect(list_body.get_by_text("VAS Boundary", exact=True)).to_be_visible()
+    expect(list_body.get_by_text("VAS Fresh", exact=True)).to_have_count(0)
+    # The bar sits above the rows and never covers them or the map.
+    bar_box = bar.bounding_box()
+    row_box = list_body.get_by_text("VAS Boundary", exact=True).bounding_box()
+    assert bar_box["y"] + bar_box["height"] <= row_box["y"] + 1, "Badge overlaps rows"
+    if width < 900:
+        assert bar_box["x"] >= 0 and bar_box["x"] + bar_box["width"] <= width, (
+            "Badge overflows viewport"
+        )
+    page.screenshot(
+        animations="disabled",
+        path=str(ARTIFACTS / f"hidden-badge-keyword-{width}.png"),
+    )
+
+    # Activity and status filters combine (AND) with the keyword.
+    page.get_by_role("button").filter(
+        has=page.locator('[data-testid="TuneIcon"]')
+    ).click()
+    page.get_by_role("combobox", name="Activity", exact=True).click()
+    page.get_by_role("option", name="Last hour", exact=True).click()
+    page.keyboard.press("Escape")
+    expect(bar).to_contain_text("Hidden: 4")
+    page.get_by_placeholder("Search Devices").fill("")
+    # With the keyword cleared, the activity window hides three stale devices.
+    expect(bar).to_contain_text("Hidden: 3")
+    page.get_by_role("button").filter(
+        has=page.locator('[data-testid="TuneIcon"]')
+    ).click()
+    filter_combobox(page, "Status").click()
+    page.get_by_role("option", name="Offline (1)", exact=True).click()
+    page.keyboard.press("Escape")
+    page.keyboard.press("Escape")
+    expect(bar).to_contain_text("Hidden: 4")
+
+    # Show all clears every filter but keeps sort and map-filter settings.
+    page.get_by_role("button", name="Show all", exact=True).click()
+    expect(bar).to_have_count(0)
+    for name in ("VAS Fresh", "VAS Boundary", "VAS Old", "VAS Missing", "VAS Future"):
+        expect(list_body.get_by_text(name, exact=True)).to_be_visible()
+    if width >= 900:
+        assert page.evaluate("localStorage.getItem('filterSort')") == '"name"'
+        assert page.evaluate("localStorage.getItem('filterMap')") == 'true'
+        # The selected row survived the reset.
+        expect(list_body.locator(".Mui-selected")).to_have_count(1)
+    # All five devices are restored to the list, including the one without
+    # coordinates; it must never produce a map marker.
+    page.wait_for_function(
+        "async () => {const {map}=await import('/src/map/core/MapView.jsx');return map.isStyleLoaded()}"
+    )
+    page.wait_for_timeout(500)
+    assert map_ids(page) == [1, 2, 3, 5], map_ids(page)
+    page.screenshot(
+        animations="disabled",
+        path=str(ARTIFACTS / f"hidden-badge-show-all-{width}.png"),
+        full_page=True,
+    )
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), (
+        "Horizontal overflow after Show all"
+    )
+    context.close()
+    print(
+        f"PASS issue-2 fixture: {width}px, hidden counter, Show all reset, sort/map/selection keep"
+    )
 
 
 def fixture_case(browser, width):
@@ -397,6 +571,16 @@ def integration_case(browser):
     page.screenshot(
         animations="disabled", path=str(ARTIFACTS / "real-api-integration.png")
     )
+    # Issue #2: the hidden counter runs on real restricted data and Show all resets it.
+    page.get_by_placeholder("Search Devices").fill("zzz-no-match")
+    expect(page.get_by_text("VAS API Fleet", exact=True)).to_have_count(0)
+    expect(page.get_by_test_id("hiddenDevicesBar")).to_contain_text("Hidden: 1")
+    page.get_by_role("button", name="Show all", exact=True).click()
+    expect(page.get_by_test_id("hiddenDevicesBar")).to_have_count(0)
+    expect(page.get_by_text("VAS API Fleet", exact=True)).to_be_visible()
+    page.screenshot(
+        animations="disabled", path=str(ARTIFACTS / "real-api-hidden-counter.png")
+    )
     (ARTIFACTS / "backend-integration.json").write_text(
         json.dumps(
             {
@@ -455,6 +639,8 @@ def main():
             )
             fixture_case(browser, 1280)
             fixture_case(browser, 390)
+            reset_badge_case(browser, 1280)
+            reset_badge_case(browser, 390)
             if not args.fixtures_only:
                 integration_case(browser)
             browser.close()

@@ -24,3 +24,7 @@ yarn-error.log*
 /artifacts/
 __pycache__/
 *.pyc
+
+# VAS local dev caches and browser environment
+.npm-cache/
+.venv/

@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
 import DeviceList from './DeviceList';
+import HiddenDevicesBar from './HiddenDevicesBar';
 import BottomMenu from '../common/components/BottomMenu';
 import StatusCard from '../common/components/StatusCard';
 import { devicesActions } from '../store';
@@ -60,7 +61,13 @@ const useStyles = makeStyles()((theme) => ({
     gridArea: '1 / 1',
     zIndex: 4,
     display: 'flex',
+    flexDirection: 'column',
     minHeight: 0,
+  },
+  listBody: {
+    flex: 1,
+    minHeight: 0,
+    display: 'flex',
   },
 }));
 
@@ -74,6 +81,7 @@ const MainPage = () => {
   const mapOnSelect = useAttributePreference('mapOnSelect', true);
 
   const selectedDeviceId = useSelector((state) => state.devices.selectedId);
+  const devices = useSelector((state) => state.devices.items);
   const positions = useSelector((state) => state.session.positions);
   const [filteredPositions, setFilteredPositions] = useState([]);
   const selectedPosition = filteredPositions.find(
@@ -91,6 +99,25 @@ const MainPage = () => {
   const [filterSort, setFilterSort] = usePersistedState('filterSort', '');
   const [filterMap, setFilterMap] = usePersistedState('filterMap', false);
   const [filterActivity, setFilterActivity] = usePersistedState('deviceActivityFilter', '');
+
+  // Devices hidden by the combined keyword/status/group/geofence/activity
+  // filters, shown above the list. The count always derives from the already
+  // computed filtered list; the bar is rendered only while a filter is active,
+  // so the initial render after device load (filters inactive, filtered list
+  // not yet recalculated) shows no counter at all.
+  const hiddenDevicesCount = Math.max(0, Object.values(devices).length - filteredDevices.length);
+  const filtersActive =
+    Boolean(keyword) ||
+    Boolean(filter.statuses.length) ||
+    Boolean(filter.groups.length) ||
+    Boolean(filter.geofences.length) ||
+    Boolean(filterActivity);
+
+  const onShowAll = useCallback(() => {
+    setKeyword('');
+    setFilter({ statuses: [], groups: [], geofences: [] });
+    setFilterActivity('');
+  }, [setKeyword, setFilter, setFilterActivity]);
 
   const [devicesOpen, setDevicesOpen] = useState(desktop);
   const [eventsOpen, setEventsOpen] = useState(false);
@@ -160,7 +187,12 @@ const MainPage = () => {
             className={classes.contentList}
             style={devicesOpen ? {} : { visibility: 'hidden' }}
           >
-            <DeviceList devices={filteredDevices} />
+            {hiddenDevicesCount > 0 && filtersActive && (
+              <HiddenDevicesBar count={hiddenDevicesCount} onShowAll={onShowAll} />
+            )}
+            <div className={classes.listBody} data-testid="deviceListBody">
+              <DeviceList devices={filteredDevices} />
+            </div>
           </Paper>
         </div>
         {desktop && (

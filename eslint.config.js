@@ -7,7 +7,7 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['build/**', 'switcher.js', 'theme.js', 'vite.config.js'],
+    ignores: ['build/**', '.venv/**', '.npm-cache/**', 'switcher.js', 'theme.js', 'vite.config.js'],
   },
   js.configs.recommended,
   eslintReact.configs.recommended,

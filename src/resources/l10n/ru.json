@@ -249,6 +249,8 @@
     "deviceActivity6h": "Последние 6 часов",
     "deviceActivity24h": "Последние 24 часа",
     "deviceActivityReset": "Сбросить",
+    "deviceHidden": "Скрыто",
+    "deviceShowAll": "Показать все",
     "deviceCommand": "Команда",
     "deviceCommandSender": "Канал команды",
     "deviceFollow": "Следовать",
